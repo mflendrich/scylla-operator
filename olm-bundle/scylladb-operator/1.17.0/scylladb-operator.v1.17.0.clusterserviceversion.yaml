@@ -1,0 +1,335 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  name: scylladb-operator.v1.17.0
+  namespace: placeholder
+  annotations:
+    alm-examples: >-
+      [{"apiVersion":"","kind":"NodeConfig","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"RemoteKubernetesCluster","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"RemoteOwner","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaCluster","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBCluster","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBDatacenter","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBManagerClusterRegistration","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBManagerTask","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBMonitoring","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaOperatorConfig","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"NodeConfig","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"RemoteKubernetesCluster","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"RemoteOwner","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBCluster","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBDatacenter","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBManagerClusterRegistration","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBManagerTask","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaDBMonitoring","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaOperatorConfig","metadata":{"name":""},"spec":{}},{"apiVersion":"","kind":"ScyllaCluster","metadata":{"name":""},"spec":{}}]
+    k8sMinVersion: ''
+    k8sMaxVersion: ''
+    categories: 'Database,   Big Data'
+    certified: 'false'
+    createdAt: ''
+    description: Monstrously Fast + Scalable NoSQL.
+    containerImage: ''
+    support: ''
+    capabilities: Full Lifecycle
+    repository: ''
+spec:
+  displayName: ScyllaDB Operator
+  description: >+
+    [ScyllaDB](https://www.scylladb.com/) is a close-to-the-hardware rewrite of
+    Cassandra in C++. It features a shared nothing architecture that enables
+    true linear scaling and major hardware optimizations that achieve ultra-low
+    latencies and extreme throughput. It is a drop-in replacement for Cassandra
+    and uses the same interfaces.
+
+
+    [ScyllaDB Documentation](https://docs.scylladb.com/stable/)
+
+    [ScyllaDB Operator](https://github.com/scylladb/scylla-operator) is a
+    Kubernetes Operator for managing and automating tasks related to managing
+    ScyllaDB clusters.
+
+
+    [ScyllaDB Operator
+    Documentation](https://operator.docs.scylladb.com/stable/)
+
+  maturity: pre-alpha
+  version: 1.17.0
+  replaces: ''
+  skips: []
+  minKubeVersion: 1.25.0
+  keywords: []
+  maintainers:
+    - name: The ScyllaDB Operator Team
+      email: rnd-cloud-operator@scylladb.com
+  provider:
+    name: The ScyllaDB Team
+  labels: {}
+  selector:
+    matchLabels: {}
+  links:
+    - name: GitHub
+      url: 'https://github.com/scylladb/scylla-operator'
+    - name: Operator Documentation
+      url: 'https://operator.docs.scylladb.com/stable/'
+    - name: ScyllaDB Documentation
+      url: 'https://docs.scylladb.com/stable/'
+  icon:
+    - base64data: ''
+      mediatype: ''
+  customresourcedefinitions:
+    owned:
+      - name: nodeconfigs.scylla.scylladb.com
+        displayName: NodeConfig
+        kind: NodeConfig
+        version: v1alpha1
+        description: Node Config
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+      - name: remotekubernetesclusters.scylla.scylladb.com
+        displayName: RemoteKubernetesCluster
+        kind: RemoteKubernetesCluster
+        version: v1alpha1
+        description: Remote Kubernetes Cluster
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+      - name: remoteowners.scylla.scylladb.com
+        displayName: RemoteOwner
+        kind: RemoteOwner
+        version: v1alpha1
+        description: Remote Owner
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+      - name: scyllaclusters.scylla.scylladb.com
+        displayName: ScyllaCluster
+        kind: ScyllaCluster
+        version: v1
+        description: Scylla Cluster
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+      - name: scylladbclusters.scylla.scylladb.com
+        displayName: ScyllaDBCluster
+        kind: ScyllaDBCluster
+        version: v1alpha1
+        description: Scylla DB Cluster
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+      - name: scylladbdatacenters.scylla.scylladb.com
+        displayName: ScyllaDBDatacenter
+        kind: ScyllaDBDatacenter
+        version: v1alpha1
+        description: Scylla DB Datacenter
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+      - name: scylladbmanagerclusterregistrations.scylla.scylladb.com
+        displayName: ScyllaDBManagerClusterRegistration
+        kind: ScyllaDBManagerClusterRegistration
+        version: v1alpha1
+        description: Scylla DB Manager Cluster Registration
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+      - name: scylladbmanagertasks.scylla.scylladb.com
+        displayName: ScyllaDBManagerTask
+        kind: ScyllaDBManagerTask
+        version: v1alpha1
+        description: Scylla DB Manager Task
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+      - name: scylladbmonitorings.scylla.scylladb.com
+        displayName: ScyllaDBMonitoring
+        kind: ScyllaDBMonitoring
+        version: v1alpha1
+        description: Scylla DB Monitoring
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+      - name: scyllaoperatorconfigs.scylla.scylladb.com
+        displayName: ScyllaOperatorConfig
+        kind: ScyllaOperatorConfig
+        version: v1alpha1
+        description: Scylla Operator Config
+        resources:
+          - version: v1
+            kind: Deployment
+          - version: v1
+            kind: Service
+          - version: v1
+            kind: ReplicaSet
+          - version: v1
+            kind: Pod
+          - version: v1
+            kind: Secret
+          - version: v1
+            kind: ConfigMap
+        specDescriptors: []
+        statusDescriptors: []
+    required:
+      - name: certificaterequests.cert-manager.io
+        displayName: cert-manager CertificateRequest
+        kind: CertificateRequest
+        version: v1
+        description: cert-manager CertificateRequest
+      - name: certificates.cert-manager.io
+        displayName: cert-manager Certificate
+        kind: Certificate
+        version: v1
+        description: cert-manager Certificate
+  install:
+    strategy: deployment
+    spec:
+      permissions:
+        - serviceAccountName: scylladb-operator-sa
+          rules:
+            - apiGroups: '""'
+              resources:
+                - '*'
+              verbs:
+                - '*'
+      clusterPermissions: []
+      deployments:
+        - name: add-deployment
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                k8s-app: example-operator
+            template:
+              metadata:
+                labels:
+                  k8s-app: example-operator
+              spec:
+                containers:
+                  image: 'quay.io/example/example-operator:v0.0.1'
+                  imagePullPolicy: Always
+                  name: example-operator
+                  resources:
+                    limits:
+                      cpu: 200m
+                      memory: 100Mi
+                    requests:
+                      cpu: 100m
+                      memory: 50Mi
+                  env:
+                    - name: WATCH_NAMESPACE
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: 'metadata.annotations[''olm.targetNamespaces'']'
+                    - name: POD_NAME
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: metadata.name
+                    - name: OPERATOR_NAME
+                      value: example-operator
+                imagePullSecrets:
+                  - name: ''
+                nodeSelector:
+                  beta.kubernetes.io/os: linux
+                serviceAccountName: default
+  installModes:
+    - type: OwnNamespace
+      supported: true
+    - type: SingleNamespace
+      supported: true
+    - type: MultiNamespace
+      supported: false
+    - type: AllNamespaces
+      supported: false

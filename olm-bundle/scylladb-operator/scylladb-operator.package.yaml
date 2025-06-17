@@ -1,0 +1,5 @@
+packageName: scylladb-operator
+defaultChannel: alpha
+channels:
+  - name: alpha
+    currentCSV: scylladb-operator.v1.17.0
