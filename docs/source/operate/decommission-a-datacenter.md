@@ -48,12 +48,6 @@ Reconfigure your applications so that they no longer connect to the nodes of the
 
 Keep clients away from the datacenter for the rest of the procedure.
 
-:::{note}
-[Maintenance mode](use-maintenance-mode.md) is not a substitute for reconfiguring clients.
-It only removes a node from its Kubernetes Service endpoints — drivers that discover nodes through ScyllaDB's topology metadata (for example in a [PodIP-based multi-datacenter setup](../deploy-scylladb/deploy-multi-datacenter-cluster.md#networking)) connect to the nodes directly and are not affected.
-It also marks the node permanently unready, so the `ScyllaCluster` reports `Available=False`, and Operator-driven changes to racks other than the one being scaled stall until the label is removed.
-:::
-
 ### Step 2: Repair the cluster
 
 Repair makes sure that the remaining datacenters hold an up-to-date copy of every write the decommissioned datacenter has seen.
@@ -69,8 +63,6 @@ For vnode-based keyspaces (`tablets = {'enabled': false}`), run a primary-range 
 ```bash
 kubectl --context="${CONTEXT_DC2}" -n=scylla exec -it pod/scylla-cluster-us-east-2-a-0 -c=scylla -- nodetool repair -pr
 ```
-
-If you use ScyllaDB Manager, you can run an ad-hoc [repair task](https://manager.docs.scylladb.com/stable/repair/) instead.
 
 ### Step 3: Remove the datacenter from keyspace replication
 
@@ -194,25 +186,6 @@ Finally, verify the health of the cluster from one of the remaining datacenters 
 ```bash
 kubectl --context="${CONTEXT_DC1}" -n=scylla exec -it pod/scylla-cluster-us-east-1-a-0 -c=scylla -- nodetool status
 kubectl --context="${CONTEXT_DC1}" -n=scylla exec -it pod/scylla-cluster-us-east-1-a-0 -c=scylla -- cqlsh -e "CONSISTENCY LOCAL_QUORUM; SELECT * FROM ks_tablets.t LIMIT 10"
-```
-
-## Key considerations
-
-```{list-table}
-:header-rows: 1
-
-* - Consideration
-  - Detail
-* - Order matters
-  - Repair and replication changes must happen while the datacenter's nodes are still up; scaling to zero must happen before deleting the `ScyllaCluster`.
-* - Irreversible
-  - After the replication change and decommission, re-adding the datacenter means bootstrapping it from scratch.
-* - Tablets vs vnodes
-  - Tablets keyspaces need staged `ALTER KEYSPACE` statements (RF changes of one at a time, explicit `0` at the end) and are repaired with a single `nodetool cluster repair`; vnode keyspaces are dropped in one `ALTER` and repaired with `nodetool repair -pr` on every node of the datacenter.
-* - Consistency levels
-  - Global consistency levels (`ALL`, `EACH_QUORUM`, `QUORUM`) may fail or block during the procedure; use `LOCAL_*` levels.
-* - ScyllaDB Manager
-  - If Manager runs in the datacenter being removed, migrate it first; a datacenter that disappears mid-task leaves failing repair/backup tasks behind.
 ```
 
 ## Related pages
