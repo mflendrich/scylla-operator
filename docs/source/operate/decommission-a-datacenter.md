@@ -35,7 +35,13 @@ Whether the leaving nodes are decommissioned one at a time or all at once depend
 
 Throughout this guide, the datacenter being decommissioned is `us-east-2`, deployed as a `ScyllaCluster` named `scylla-cluster` in namespace `scylla` of the Kubernetes cluster reachable via context `${CONTEXT_DC2}`.
 The remaining datacenter is `us-east-1`, reachable via `${CONTEXT_DC1}`.
-Adjust the names, namespaces, and contexts to your deployment.
+Export the contexts before you begin:
+
+```bash
+export CONTEXT_DC1= ... # kubeconfig context of the Kubernetes cluster hosting your first DC
+export CONTEXT_DC2= ... # kubeconfig context of the Kubernetes cluster hosting your second DC
+export CONTEXT_DC3= ... # continue for more DCs
+```
 
 ## Procedure
 
@@ -78,15 +84,24 @@ For **every** keyspace that lists the datacenter being decommissioned in its rep
 For a vnode-based keyspace, drop the datacenter in a single statement by leaving it out of the replication map:
 
 ```cql
-ALTER KEYSPACE ks_vnodes WITH replication = {'class': 'NetworkTopologyStrategy', 'us-east-1': 3};
+/* In the commmand below, change `ks_vnodes` to the name of your vnode-based keyspace. */
+/* Edit the list of datacenters in the `replication` object to match your remaining datacenters. */
+
+ALTER KEYSPACE ks_vnodes WITH replication = {'class': 'NetworkTopologyStrategy', 'us-east-1': 3, };
 ```
 
 For a tablets-based keyspace, ScyllaDB only allows changing the replication factor of one datacenter at a time, and only by one — attempting a larger change is rejected with `Only one DC's RF can be changed at a time and not by more than 1`.
 Step the replication factor down to zero one `ALTER` at a time, ending with an explicit `0` (omitting the datacenter is rejected with `Attempted to implicitly drop replicas in datacenter ...`):
 
 ```cql
+/* In the commmands below, change `ks_tablets` to the name of your tablet-based keyspace. */
+/* Edit the list of datacenters in the `replication` object to match your remaining datacenters. */
+
+/* Reduce us-east-2 from 3 to 2 */
 ALTER KEYSPACE ks_tablets WITH replication = {'class': 'NetworkTopologyStrategy', 'us-east-1': 3, 'us-east-2': 2};
+/* Reduce us-east-2 from 2 to 1 */
 ALTER KEYSPACE ks_tablets WITH replication = {'class': 'NetworkTopologyStrategy', 'us-east-1': 3, 'us-east-2': 1};
+/* Reduce us-east-2 from 1 to 0 */
 ALTER KEYSPACE ks_tablets WITH replication = {'class': 'NetworkTopologyStrategy', 'us-east-1': 3, 'us-east-2': 0};
 ```
 
