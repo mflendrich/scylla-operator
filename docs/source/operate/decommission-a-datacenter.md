@@ -22,7 +22,8 @@ To prevent data loss and preserve cluster integrity, first read the entire proce
 ScyllaDB Operator only automates operations within a single datacenter.
 Removing a whole datacenter is a manual, cross-datacenter procedure that combines ScyllaDB-level steps (repair, replication changes) with Operator-level steps (scaling racks to zero, updating seeds).
 It follows the upstream [Decommissioning a Data Center](https://docs.scylladb.com/manual/stable/operating-scylla/procedures/cluster-management/decommissioning-data-center.html) procedure, with `nodetool decommission` replaced by an Operator-driven scale-down:
-when you scale a rack down, the Operator decommissions the highest-ordinal node, waits for its data to stream away, and then deletes the pod, its PVC, and its Service — one node at a time.
+when you scale a rack down, the Operator decommissions the leaving nodes, waits for their data to stream away, and then deletes each pod, its PVC, and its Service.
+Whether the leaving nodes are decommissioned one at a time or all at once depends on [parallel node operations](scale-add-remove-racks.md#sequential-and-parallel-node-operations).
 
 ## Prerequisites
 
@@ -129,7 +130,7 @@ spec:
         members: 0          # was 1, now 0
 ```
 
-The Operator decommissions the nodes one at a time, streaming any remaining data away before deleting each pod, its PVC, and its Service.
+The Operator decommissions the nodes — one at a time or all at once, depending on [parallel node operations](scale-add-remove-racks.md#sequential-and-parallel-node-operations) — streaming any remaining data away before deleting each pod, its PVC, and its Service.
 Wait for the scale-down to finish — with large datasets this can take a long time:
 
 ```bash
