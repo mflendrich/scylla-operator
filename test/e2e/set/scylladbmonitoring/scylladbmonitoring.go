@@ -536,9 +536,9 @@ func getExpectedPlatformDashboards() (expectedDashboards []grafana.Dashboard, ho
 }
 
 type grafanaDashboard struct {
-	Title string   `json:"title"`
-	Tags  []string `json:"tags"`
-	UID   string   `json:"uid"`
+	Title string
+	Tags  []string
+	UID   string
 }
 
 // grafanaDashboardV2Resource represents a dashboard in the Grafana dashboard v2 resource format
@@ -581,21 +581,15 @@ func decodeGrafanaDashboardFromGZBase64String(s string) (*grafanaDashboard, erro
 		return nil, fmt.Errorf("can't unmarshal grafana dashboard: %w", err)
 	}
 
-	if v2Resource.Kind == "Dashboard" && strings.HasPrefix(v2Resource.APIVersion, grafanaDashboardAPIGroup+"/") {
-		return &grafanaDashboard{
-			Title: v2Resource.Spec.Title,
-			Tags:  v2Resource.Spec.Tags,
-			UID:   v2Resource.Metadata.Name,
-		}, nil
+	if v2Resource.Kind != "Dashboard" || !strings.HasPrefix(v2Resource.APIVersion, grafanaDashboardAPIGroup+"/") {
+		return nil, fmt.Errorf("unsupported grafana dashboard format: apiVersion %q, kind %q", v2Resource.APIVersion, v2Resource.Kind)
 	}
 
-	res := &grafanaDashboard{}
-	err = json.Unmarshal(data, &res)
-	if err != nil {
-		return nil, fmt.Errorf("can't unmarshal grafana dashboard: %w", err)
-	}
-
-	return res, nil
+	return &grafanaDashboard{
+		Title: v2Resource.Spec.Title,
+		Tags:  v2Resource.Spec.Tags,
+		UID:   v2Resource.Metadata.Name,
+	}, nil
 }
 
 func prepareExternalPrometheusWithoutTLS(ctx context.Context, f *framework.Framework, smName string) {
