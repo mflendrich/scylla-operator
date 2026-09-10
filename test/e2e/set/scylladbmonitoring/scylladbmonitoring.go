@@ -541,6 +541,22 @@ type grafanaDashboard struct {
 	UID   string   `json:"uid"`
 }
 
+// grafanaDashboardV2Resource represents a dashboard in the Grafana dashboard v2 resource format
+// (apiVersion dashboard.grafana.app/v2), where the UID is carried by metadata.name.
+type grafanaDashboardV2Resource struct {
+	APIVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Metadata   struct {
+		Name string `json:"name"`
+	} `json:"metadata"`
+	Spec struct {
+		Title string   `json:"title"`
+		Tags  []string `json:"tags"`
+	} `json:"spec"`
+}
+
+const grafanaDashboardAPIGroup = "dashboard.grafana.app"
+
 func decodeGrafanaDashboardFromGZBase64String(s string) (*grafanaDashboard, error) {
 	b64Reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(s))
 	zr, err := gzip.NewReader(b64Reader)
@@ -557,6 +573,20 @@ func decodeGrafanaDashboardFromGZBase64String(s string) (*grafanaDashboard, erro
 	data, err := io.ReadAll(zr)
 	if err != nil {
 		return nil, fmt.Errorf("can't read data from gzip reader: %w", err)
+	}
+
+	v2Resource := &grafanaDashboardV2Resource{}
+	err = json.Unmarshal(data, v2Resource)
+	if err != nil {
+		return nil, fmt.Errorf("can't unmarshal grafana dashboard: %w", err)
+	}
+
+	if v2Resource.Kind == "Dashboard" && strings.HasPrefix(v2Resource.APIVersion, grafanaDashboardAPIGroup+"/") {
+		return &grafanaDashboard{
+			Title: v2Resource.Spec.Title,
+			Tags:  v2Resource.Spec.Tags,
+			UID:   v2Resource.Metadata.Name,
+		}, nil
 	}
 
 	res := &grafanaDashboard{}
