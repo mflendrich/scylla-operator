@@ -93,15 +93,8 @@ func (c *Client) HomeDashboardTitle() (string, error) {
 
 	payload := resp.GetPayload()
 
-	if m, ok := payload.Dashboard.(map[string]interface{}); ok {
-		if title, ok := m["title"].(string); ok {
-			return title, nil
-		}
-		return "", fmt.Errorf("home dashboard does not have a title")
-	}
-
 	if payload.RedirectURI == "" {
-		return "", fmt.Errorf("unexpected type for dashboard payload")
+		return "", fmt.Errorf("home dashboard response does not have a redirect URI")
 	}
 
 	// The redirect URI has the form "/d/{uid}/{slug}".
