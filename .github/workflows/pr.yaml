@@ -11,7 +11,41 @@ permissions:
   contents: read
 
 jobs:
+  # The exemption is a job-level skip rather than a paths-ignore on the trigger: a workflow skipped by path
+  # filtering leaves its contexts Pending forever, which blocks merging once check-required is a required
+  # context, while a job skipped by a conditional reports success.
+  tests-required:
+    name: tests-required
+    runs-on: ubuntu-latest
+    outputs:
+      value: ${{ steps.compute.outputs.value }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Check for changes outside test-exempt paths
+        id: compute
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          changed="$( git diff --name-only "${BASE_SHA}...${HEAD_SHA}" )"
+          non_exempt="$( grep -v -x -F \
+            -e '.github/CODEOWNERS' \
+            <<< "${changed}" || true )"
+          if [[ -n "${non_exempt}" ]]; then
+            value=true
+          else
+            value=false
+          fi
+          echo "value=${value}" | tee -a "${GITHUB_OUTPUT}"
+
   ci:
+    needs: tests-required
+    if: needs.tests-required.outputs.value == 'true'
     uses: ./.github/workflows/ci-jobs.yaml
 
   verify-commits:
@@ -36,6 +70,7 @@ jobs:
   check-required:
     runs-on: ubuntu-latest
     needs:
+    - tests-required
     - ci
     - verify-commits
     if: always()

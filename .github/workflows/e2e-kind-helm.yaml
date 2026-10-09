@@ -2,6 +2,8 @@ name: "E2E: KinD (Helm)"
 
 on:
   pull_request:
+    paths-ignore:
+      - '.github/CODEOWNERS'
   workflow_dispatch:
 
 concurrency:
